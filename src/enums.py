@@ -1,83 +1,86 @@
 """
-Enum definitions matching the C++ exchange types.
-These define the shared vocabulary between Python bots and C++ exchange.
+Enums matching the exchange types
 """
 from enum import IntEnum
 
 
 class Side(IntEnum):
-    """Buy or sell direction. Matches ex::Side in C++ exchange."""
+    """Order side, Buy side or Sell side"""
     BUY = 1
     SELL = 2
     
     def as_string(self):
-        """Convert to JSON format used in message body."""
+        """Convert to JSON format"""
         if self == Side.BUY:
             return "B"
-        return "S"
+        else:
+            return "S"
     
     @classmethod
     def parse(cls, code):
-        """Convert from JSON format back to enum."""
-        code = code.upper()
-        if code in ("B", "BUY", "BID"):
+        """Parse from JSON format"""
+        if code in ("B", "Buy", "BUY", "bid", "BID"):
             return cls.BUY
         elif code in ("S", "SELL", "ASK"):
             return cls.SELL
-        raise ValueError(f"Invalid Side: {code}")
-
+        else:
+            raise ValueError(f"{code} is an Invalid Side")
 
 class OrdType(IntEnum):
-    """Order type. Matches ex::OrdType in C++ exchange."""
+    """Order type, Market or Limit"""
     MARKET = 1
     LIMIT = 2
     
     def as_string(self):
-        """Convert to JSON format used in message body."""
+        """ Convert to JSON wire format """
         if self == OrdType.MARKET:
             return "MKT"
-        return "LMT"
+        else:
+            return "LMT"
     
     @classmethod
     def parse(cls, code):
-        """Convert from JSON format back to enum."""
+        """Parse from JSON wire format"""
         code = code.upper()
         if code in ("MKT", "MARKET"):
             return cls.MARKET
         elif code in ("LMT", "LIMIT"):
             return cls.LIMIT
-        raise ValueError(f"Invalid OrdType: {code}")
+        else:
+            raise ValueError(f"{code} is an Invalid OrdType")
 
 
 class TimeInForce(IntEnum):
-    """How long order stays active. Matches ex::TimeInForce in C++ exchange."""
+    """How Long Should the Order Stay Active"""
     DAY = 1
-    IOC = 2  # Immediate Or Cancel
+    IOC = 2  # Immediate or Cancel
     
     def as_string(self):
-        """Convert to JSON format used in message body."""
+        """Convert to JSON format"""
         if self == TimeInForce.DAY:
             return "DAY"
-        return "IOC"
+        else:
+            return "IOC"
     
     @classmethod
     def parse(cls, code):
-        """Convert from JSON format back to enum."""
+        """Parse from JSON format"""
         code = code.upper()
         if code == "DAY":
             return cls.DAY
         elif code == "IOC":
             return cls.IOC
-        raise ValueError(f"Invalid TimeInForce: {code}")
+        else:
+            raise ValueError(f"{code} is an Invalid TimeInForce")
 
 
 class MsgType(IntEnum):
-    """Message type identifier. Matches ex::MsgType in C++ exchange."""
-    # Bot → Exchange (outbound)
+    """Message type"""
+    # Bot -> Exchange
     NEW_ORDER = 1
     CANCEL = 2
     
-    # Exchange → Bot (inbound)
+    # Exchange -> Bot
     ACK = 100
     REJECT = 101
     FILL = 102
